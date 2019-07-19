@@ -1,0 +1,35 @@
+---
+- hosts: debian
+  tasks:
+    - name: "Remove useless packages from the cache (apt autoclean)"
+      apt:
+        autoclean: yes
+
+    - name: "Remove dependencies that are no longer required (apt autoremove)"
+      apt:
+        autoremove: yes
+
+    - name: "Update Cache (apt update)"
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: "Update all packages to the latest version (apt dist-upgrade)"
+      apt:
+        upgrade: dist
+
+    - name: "Unconditionally reboot the machine with all defaults"
+      reboot:
+
+    - name: "Wait for system to become reachable again"
+      wait_for_connection:
+        delay: 10
+        timeout: 300
+
+    - name: "Remove useless packages from the cache (apt autoclean)"
+      apt:
+        autoclean: yes
+
+    - name: "Remove dependencies that are no longer required (apt autoremove)"
+      apt:
+        autoremove: yes
