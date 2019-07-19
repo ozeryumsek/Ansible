@@ -1,0 +1,20 @@
+---
+- hosts: debian
+  tasks:
+    - name: "Update Cache (apt update)"
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+
+    - name: Install vm-tools
+      apt:
+        name: open-vm-tools
+        state: present
+
+    - name: "Unconditionally reboot the machine with all defaults"
+      reboot:
+
+    - name: "Wait for system to become reachable again"
+      wait_for_connection:
+        delay: 10
+        timeout: 300
