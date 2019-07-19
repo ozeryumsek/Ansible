@@ -1,0 +1,23 @@
+---
+- hosts: centos
+  tasks:
+    - name: Update Cache
+      yum:
+        update_cache: yes
+
+    - name: Install vm-tools
+      yum:
+        name: open-vm-tools
+        state: latest
+
+    - name: "Unconditionally reboot the machine with all defaults"
+      reboot:
+
+    - name: "Wait for system to become reachable again"
+      wait_for_connection:
+        delay: 10
+        timeout: 300
+
+    - name: Update Cache
+      yum:
+        update_cache: yes
