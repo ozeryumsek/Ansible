@@ -1,0 +1,15 @@
+[debian]
+10.210.210.41
+
+[centos]
+10.210.210.51
+
+[win]
+10.210.210.61
+10.210.210.62
+
+[win:vars]
+ansible_user=Administrator
+ansible_password=****
+ansible_connection=winrm
+ansible_winrm_server_cert_validation=ignore
