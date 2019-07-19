@@ -1,0 +1,72 @@
+---
+- name: Create a VM from a template
+  hosts: localhost
+  connection: local
+  gather_facts: no
+  tasks:
+  - name: Clone the template
+    vmware_guest:
+      hostname: 10.210.210.10
+      username: administrator@vsphere.local
+      password: ****
+      validate_certs: False
+      name: WS02
+      template: WS01
+      datacenter: TEST
+      folder: TEST/vm
+      guest_id: windows9Server64Guest
+      state: poweredon
+      hardware:
+        memory_mb: 4096
+        num_cpu: 2
+        scsi: paravirtual
+      networks:
+      - name: VM Network
+        ip: 10.210.210.62
+        netmask: 255.255.255.0
+        gateway: 10.210.210.1
+        domain: test.local
+        wait_for_ip_address: yes
+      customization:
+        autologon: yes
+        dns_servers:
+        - 10.210.210.21
+        dns_suffix:
+        - test.local
+        domain: test.local
+        joindomain: test.local
+        domainadmin: Administrator@test.local
+        domainadminpassword: ****
+        password: 1234qqqQ
+        hostname: WS02
+        runonce:
+        - powershell.exe -ExecutionPolicy Unrestricted -File C:\PerfLogs\ConfigureRemotingForAnsible.ps1 -ForceNewSSLCert -EnableCredSSP
+      wait_for_customization: yes
+      wait_for_ip_address: yes
+    delegate_to: localhost
+  - name: Wait for 5 min
+    pause:
+      minutes: 5
+
+- name: Update and Restart Server
+  hosts: 10.210.210.62
+  tasks:
+    - name: Install all security updates with automatic reboots
+      win_updates:
+        category_names:
+        - SecurityUpdates
+        - CriticalUpdates
+        - UpdateRollups
+        - Definition Updates
+        - Updates
+        reboot: yes
+
+    - name: Ensure we wait long enough for the updates to be applied during reboot
+      win_updates:
+        reboot: yes
+        reboot_timeout: 3600
+
+    - name: Ensure WinRM starts when the system has settled and is ready to work reliably
+      win_service:
+        name: WinRM
+        start_mode: delayed
