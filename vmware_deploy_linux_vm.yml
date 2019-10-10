@@ -37,15 +37,15 @@
       wait_for_customization: yes
       wait_for_ip_address: yes
     delegate_to: localhost
-    - name: Perform storage vMotion and host vMotion of virtual machine
-      vmware_vmotion:
-        hostname: 10.210.210.10
-        username: administrator@vsphere.local
-        password: 1234qqqQ*
-        validate_certs: no
-        vm_name: Samba01
-        destination_host: esx02.test.local
-        destination_datastore: 12_Local_Large
+  - name: Perform storage vMotion and host vMotion of virtual machine
+    vmware_vmotion:
+      hostname: 10.210.210.10
+      username: administrator@vsphere.local
+      password: 1234qqqQ*
+      validate_certs: no
+      vm_name: Samba01
+      destination_host: esx02.test.local
+      destination_datastore: 12_Local_Large
     delegate_to: localhost
 
 - name: Update Centos Server
